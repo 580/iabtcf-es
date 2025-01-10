@@ -1,8 +1,8 @@
-import {EncodingError} from '../errors';
-import {TCModel} from '../TCModel';
-import {EncodingOptions} from './EncodingOptions';
-import {Vector, RestrictionType} from '../model';
-import {GVL} from '../GVL';
+import {EncodingError} from '../errors/index.js';
+import {TCModel} from '../TCModel.js';
+import {EncodingOptions} from './EncodingOptions.js';
+import {Vector, RestrictionType} from '../model/index.js';
+import {GVL} from '../GVL.js';
 
 type ProcessorFunction = (tcModel: TCModel, gvl: GVL) => TCModel;
 
@@ -21,8 +21,9 @@ export class SemanticPreEncoder {
 
       /**
        * Purpose 1 is never allowed to be true for legitimate interest
+       * As of TCF v2.2 purposes 3,4,5 & 6 are not allowed to be true for LI
        */
-      tcModel.purposeLegitimateInterests.unset(1);
+      tcModel.purposeLegitimateInterests.unset([1, 3, 4, 5, 6]);
 
       /**
        * If a Vendor does not declare a purpose for consent or legitimate
@@ -170,7 +171,7 @@ export class SemanticPreEncoder {
     }
 
     tcModel = tcModel.clone();
-    tcModel.consentLanguage = gvl.language.toUpperCase();
+    tcModel.consentLanguage = gvl.language.slice(0, 2).toUpperCase();
 
     if (options?.version > 0 && options?.version <= this.processor.length) {
 
